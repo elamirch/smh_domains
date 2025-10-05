@@ -34,7 +34,8 @@ mod smh_domains {
 
     impl SmhDomains {
         #[ink(constructor)]
-        pub fn create_domain(init_domain: String, init_owner: H160) -> Self {
+        pub fn create_domain(init_domain: String) -> Self {
+            let caller = Self::env().caller();
             let my_return_value = build_call::<DefaultEnvironment>()
                 .call(H160::from_slice(<HARD-CODED-CONTRACT-ADDRESS>))
                 .exec_input(
@@ -45,7 +46,7 @@ mod smh_domains {
                 .returns::<bool>()
                 .invoke();
             assert!(my_return_value, "Domain already exists");
-            Self { domain: init_domain, owner: init_owner, zones: Vec::new(), }
+            Self { domain: init_domain, owner: caller, zones: Vec::new(), }
         }
 
         #[ink(message)]
