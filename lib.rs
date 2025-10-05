@@ -7,6 +7,7 @@ mod smh_domains {
         call::{build_call, ExecutionInput, Selector},
         DefaultEnvironment,
     };
+    use ink::H160;
 
     pub type Zone = (String, String);
 
@@ -21,24 +22,27 @@ mod smh_domains {
     #[ink(event)]
     pub struct OwnershipTransferred {
         #[ink(topic)]
-        new_owner: AccountId,
+        new_owner: H160,
     }
 
     #[ink(storage)]
     pub struct SmhDomains {
         domain: String,
-        owner: AccountId,
+        owner: H160,
         zones: Vec<Zone>,
     }
 
     impl SmhDomains {
         #[ink(constructor)]
-        pub fn create_domain(init_domain: String, init_owner: AccountId) -> Self {
+        pub fn create_domain(init_domain: String, init_owner: H160) -> Self {
             let my_return_value = build_call::<DefaultEnvironment>()
-                .call(AccountId::from(<HARD-CODED-CONTRACT-ADDRESS>))
-                .call_v1()
-                .gas_limit(0)
-                .transferred_value(0)
+                .call(H160::from_slice(
+                    &[
+                        0x58, 0x01, 0xb4, 0x39, 0xa6, 0x78, 0xd9, 0xd3,
+                        0xa6, 0x8b, 0x80, 0x19, 0xda, 0x6a, 0x4a, 0xbf,
+                        0xa5, 0x07, 0xde, 0x11,
+                    ]
+                ))
                 .exec_input(
                     ExecutionInput::new(Selector::new(ink::selector_bytes!("register_if_free")))
                         .push_arg(&init_domain)
@@ -74,7 +78,7 @@ mod smh_domains {
         }
 
         #[ink(message)]
-        pub fn transfer(&mut self, new_owner: AccountId) -> bool {
+        pub fn transfer(&mut self, new_owner: H160) -> bool {
             let caller = Self::env().caller();
             if caller != self.owner { return false; }
             if new_owner == self.owner { return false; }
@@ -91,7 +95,7 @@ mod smh_domains {
         }
 
         #[ink(message)]
-        pub fn owner(&self) -> AccountId {
+        pub fn owner(&self) -> H160 {
             self.owner
         }
 
