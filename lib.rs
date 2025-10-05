@@ -36,13 +36,7 @@ mod smh_domains {
         #[ink(constructor)]
         pub fn create_domain(init_domain: String, init_owner: H160) -> Self {
             let my_return_value = build_call::<DefaultEnvironment>()
-                .call(H160::from_slice(
-                    &[
-                        0x58, 0x01, 0xb4, 0x39, 0xa6, 0x78, 0xd9, 0xd3,
-                        0xa6, 0x8b, 0x80, 0x19, 0xda, 0x6a, 0x4a, 0xbf,
-                        0xa5, 0x07, 0xde, 0x11,
-                    ]
-                ))
+                .call(H160::from_slice(<HARD-CODED-CONTRACT-ADDRESS>))
                 .exec_input(
                     ExecutionInput::new(Selector::new(ink::selector_bytes!("register_if_free")))
                         .push_arg(&init_domain)
