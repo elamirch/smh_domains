@@ -50,9 +50,9 @@ mod smh_domains {
 
         #[ink(message)]
         pub fn add_zone(&mut self, name: String, value: String) {
+            let caller = Self::env().caller();
+            assert!(caller == self.owner, "Domain already exists");
             Self::env().emit_event(ZoneUpdated {
-                let caller = Self::env().caller();
-                if caller != self.owner { return false; }
                 name: name.clone(),
                 value: value.clone(),
             });
